@@ -30,6 +30,14 @@
 \usepackage[alf,abnt-emphasize=bf]{abntex2cite}  % citações autor-data (ABNT), títulos em negrito
 
 % -----------------------------------------------------------------------------
+% Versão do texto (MAIOR.MENOR.CORREÇÃO). Ao mudar, registre no CHANGELOG.md.
+% \rascunhotrue imprime a versão no rodapé; use \rascunhofalse na entrega.
+% -----------------------------------------------------------------------------
+\newcommand{\versaotcc}{0.4.0}
+\newif\ifrascunho
+\rascunhotrue
+
+% -----------------------------------------------------------------------------
 % Dados do trabalho
 % -----------------------------------------------------------------------------
 \titulo{Algoritmo Genético Híbrido para o CVRPTW em Logística Urbana de Última Milha}
@@ -50,7 +58,7 @@ Ciência da Computação da Universidade Paulista --- UNIP, Campus Brasília.}
 \hypersetup{
 	pdftitle={\@title},
 	pdfauthor={Rafael Silva dos Santos},
-	pdfsubject={\imprimirpreambulo},
+	pdfsubject={\imprimirpreambulo\space Versão \versaotcc.},
 	pdfcreator={LaTeX with abntex2},
 	pdfkeywords={abnt}{latex}{unip}{ciência da computação}{CVRPTW}{algoritmo genético híbrido}{busca local}{heurística gulosa}{otimização combinatória},
 	colorlinks=false,
@@ -71,6 +79,13 @@ Ciência da Computação da Universidade Paulista --- UNIP, Campus Brasília.}
 % Espaçamento após o indicador de seção e parágrafos
 \setlength{\parindent}{1.3cm}
 \setlength{\parskip}{0cm}
+
+% Versão no rodapé de cada página (só em rascunho; não altera a paginação)
+\ifrascunho
+\AddToHook{shipout/foreground}{%
+	\put(\dimexpr0.5\paperwidth\relax,\dimexpr-\paperheight+1cm\relax){%
+		\makebox[0pt]{\scriptsize\textcolor[gray]{0.5}{Versão \versaotcc{} --- rascunho}}}}
+\fi
 
 \makeindex
 

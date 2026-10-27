@@ -129,6 +129,9 @@ cd tcc && latexmk main.tex    # gera build/main.pdf
 
 O PDF deve ter 24 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
 
+**Versão do texto:** `\versaotcc` em `tcc/main.tex` (`MAIOR.MENOR.CORREÇÃO`), com o histórico e as
+regras em `CHANGELOG.md`. Sem tags no Git. A versão só sobe quando o grupo pedir.
+
 **Convenções do LaTeX:**
 
 - Títulos de capítulo em MAIÚSCULAS no fonte, por exemplo `\chapter{METODOLOGIA}`. Seções seguem o padrão "Etapa N - Título".
