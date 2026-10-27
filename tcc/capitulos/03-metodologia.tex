@@ -152,8 +152,9 @@ de comparação entre os algoritmos e o procedimento utilizado para sua obtenç�
 	instância, atestando a viabilidade computacional da abordagem para aplicações reais
 	de planejamento de rotas urbanas. A avaliação considera múltiplas execuções
 	independentes, das quais se extraem o tempo médio, a variabilidade e o pior caso
-	observado, sendo o algoritmo viável quando o tempo obtido for inferior ao limite de
-	1500 ms por instância. Sua medição é feita cronometrando o intervalo entre o
+	observado, sendo o algoritmo viável quando o pior caso observado for inferior ao
+	limite de 1500 ms por instância, conforme os critérios definidos no
+	item~\ref{sec:criterios}. Sua medição é feita cronometrando o intervalo entre o
 	recebimento da instância e a produção da solução final, registrado em
 	milissegundos a cada execução. Os três valores obtidos são comparados entre a
 	heurística do Vizinho Mais Próximo, o Algoritmo Genético puro (GA) e o Algoritmo
@@ -189,9 +190,11 @@ variação introduza ruído estatístico e comprometa a validade interna do expe
 	\item \textbf{Fator primário: tipo de algoritmo de roteamento}
 
 	O fator central deste experimento é o algoritmo empregado na geração das rotas,
-	apresentando dois níveis: a heurística do Vizinho Mais Próximo, adotada como
-	baseline, e o Algoritmo Genético Híbrido (GA+LS), proposta principal deste
-	trabalho. Este fator sustenta diretamente o objetivo de eficiência definido na
+	apresentando três níveis: a heurística do Vizinho Mais Próximo, adotada como
+	baseline; o Algoritmo Genético Híbrido (GA+LS), proposta principal deste
+	trabalho; e o Algoritmo Genético puro (GA), sem busca local, que atua como controle
+	para isolar a contribuição da hibridização, conforme detalhado a seguir. Este fator
+	sustenta diretamente o objetivo de eficiência definido na
 	Etapa 1 (item~\ref{sec:etapa1}), sendo sua variação a que fundamenta a avaliação da
 	hipótese central da pesquisa.
 
@@ -266,7 +269,7 @@ de Roteamento de Veículos Capacitados com Janelas de Tempo pertence à classe d
 problemas NP-difíceis, para os quais não existe expressão fechada capaz de prever, em
 tempo computacionalmente viável, a qualidade das soluções produzidas pelas heurísticas
 e meta-heurísticas avaliadas. Ainda assim, a modelagem analítica fundamenta as
-equações de custo, as restrições de capacidade e janela de tempo, e a função objetivo
+equações de custo, as restrições de capacidade e janela de tempo, e a função de aptidão
 do Algoritmo Genético Híbrido, apresentadas no \autoref{cap:modelagem}.
 
 Adota-se, portanto, a combinação de simulação e medição direta. A simulação consiste na
@@ -316,19 +319,167 @@ solução ótima amplamente documentada e citada em estudos de VRPTW.
 \section{Etapa 6 - Desenho do experimento}
 \label{sec:etapa6}
 
-% TODO: escrever
+O desenho experimental estabelece o procedimento de execução e comparação das três
+configurações algorítmicas definidas na Etapa 3 (item~\ref{sec:etapa3}): a heurística
+gulosa do Vizinho Mais Próximo (NN, do inglês \textit{Nearest Neighbor}), o Algoritmo
+Genético puro (GA) e o Algoritmo Genético Híbrido (GA+LS). Todas são executadas sobre a
+instância C101 do benchmark de \citeonline{solomon1987}, apresentada na Etapa 5
+(item~\ref{sec:etapa5}), com as mesmas condições de entrada e as mesmas restrições
+operacionais, incluindo o tratamento das janelas de tempo e da capacidade definido na
+Etapa 2 (item~\ref{sec:etapa2}).
+
+São realizadas 30 execuções por configuração, totalizando 90 execuções experimentais.
+Para o GA e o GA+LS, cada execução recebe uma semente de geração de números aleatórios
+(\textit{seed}) distinta e definida previamente, e o mesmo conjunto de 30 sementes é
+utilizado nas duas configurações. Como a população inicial é gerada a partir da semente
+antes de qualquer aplicação da busca local, as execuções do GA e do GA+LS com a mesma
+semente partem da mesma população, o que permite tratá-las como pares na análise
+estatística e atribuir a diferença entre elas à busca local.
+
+A heurística do Vizinho Mais Próximo é determinística e produz a mesma solução para uma
+mesma instância e as mesmas condições de execução. Suas 30 repetições permitem observar
+a variabilidade do tempo de processamento, enquanto a solução obtida constitui uma
+referência fixa para a avaliação da qualidade das rotas produzidas pelos algoritmos
+evolutivos.
+
+As execuções são realizadas de forma sequencial, no mesmo equipamento e sem outras
+aplicações em uso, alternando-se as configurações ao longo da sequência, de modo que
+variações de carga da máquina durante o experimento não favoreçam uma configuração em
+particular. Cada execução gera um registro com a configuração, a semente e os valores das
+métricas definidas na Etapa 2 (item~\ref{sec:etapa2}), posteriormente submetidos aos
+procedimentos de análise descritos na Etapa 7 (item~\ref{sec:etapa7}).
 
 % -----------------------------------------------------------------------------
 \section{Etapa 7 - Análise dos dados}
 \label{sec:etapa7}
 
-% TODO: escrever
+Os dados do experimento consistem nos 90 registros produzidos conforme a Etapa 6
+(item~\ref{sec:etapa6}), analisados separadamente para cada uma das quatro métricas da
+Etapa 2 (item~\ref{sec:etapa2}). Por ser determinística, a heurística NN apresenta valor
+único de custo e de taxa de entregas não atendidas, usado como referência fixa; seu
+desvio das janelas de tempo é nulo por construção, e apenas seu tempo de execução varia
+entre as repetições.
+
+Como os clientes atendidos após o limite de sua janela são retirados da solução final e
+contabilizados como não atendidos, uma solução pode apresentar menor custo de
+deslocamento justamente por atender menos clientes. Por isso, o custo total de
+deslocamento é sempre interpretado em conjunto com a taxa de entregas não atendidas, e
+uma redução de custo só é tomada como melhoria quando não vem acompanhada de aumento
+dessa taxa. A análise compreende as etapas a seguir.
+
+\begin{alineas}
+	\item \textbf{Estatísticas descritivas}
+
+	Para cada configuração e métrica, calculam-se média, desvio padrão, mediana, mínimo e
+	máximo, sendo o máximo do tempo de execução o pior caso observado, conforme a Etapa 2
+	(item~\ref{sec:etapa2}). Para a heurística NN, o custo e a taxa de entregas não
+	atendidas são reportados como valor único. O custo de cada configuração é ainda
+	expresso como desvio percentual (\textit{gap}) em relação à melhor solução conhecida da
+	instância C101 na literatura, compondo a comparação externa prevista na Etapa 4
+	(item~\ref{sec:etapa4}).
+
+	\item \textbf{Intervalos de confiança}
+
+	Estima-se o intervalo de confiança de 95\% para a média de cada métrica do GA e do
+	GA+LS, cujo comportamento estocástico faz cada execução poder produzir uma solução
+	diferente, e para a média do tempo de execução da heurística NN. Adota-se o
+	\textit{bootstrap} percentílico com 10.000 reamostragens, que dispensa o pressuposto de
+	normalidade. Para as demais métricas da heurística NN, o intervalo não se aplica, pois
+	o valor único não possui variabilidade a quantificar.
+
+	\item \textbf{Testes de hipótese}
+
+	Dada a natureza estocástica dos algoritmos evolutivos, adotam-se testes
+	não-paramétricos, que não pressupõem normalidade, conforme previsto no
+	item~\ref{sec:natureza}. O GA e o GA+LS são comparados nas quatro métricas pelo teste
+	de Wilcoxon de postos sinalizados, pareado pela semente. Cada algoritmo evolutivo é
+	comparado à heurística NN pelo teste de Wilcoxon de uma amostra contra o valor de
+	referência, para custo e taxa de entregas não atendidas, e pelo teste de Mann-Whitney U
+	para o tempo de execução, que também varia na heurística NN. O desvio das janelas de
+	tempo não é comparado com a heurística NN, pois seu valor nulo decorre da forma de
+	construção das rotas, e não da qualidade da solução. Os testes são bilaterais, com
+	nível de significância $\alpha = 0{,}05$ e correção de Holm para as 10 comparações
+	realizadas (quatro entre GA e GA+LS e três de cada algoritmo evolutivo com a heurística
+	NN). Quando todas as observações coincidem com o valor de comparação, o teste não é
+	aplicável e reporta-se a igualdade.
+
+	\item \textbf{Tamanho de efeito}
+
+	Como a significância estatística não informa a relevância prática de uma diferença,
+	reportam-se, para cada comparação, a correlação bisserial por postos, na forma pareada
+	para os testes de Wilcoxon e na forma independente para o teste de Mann-Whitney U, e a
+	variação percentual da mediana em relação à configuração de comparação.
+\end{alineas}
+
+Os critérios que, a partir desses resultados, determinam a aceitação ou a rejeição da
+hipótese central são definidos no item~\ref{sec:criterios}.
 
 % -----------------------------------------------------------------------------
 \section{Critérios e Avaliação da Hipótese}
 \label{sec:criterios}
 
-% TODO: escrever
+A hipótese central desta pesquisa estabelece que o Algoritmo Genético Híbrido (GA+LS)
+produz soluções de melhor qualidade para o CVRPTW do que a heurística do Vizinho Mais
+Próximo, sem exceder o limite de 1500 ms por instância. Sua avaliação decompõe-se nos
+dois objetivos definidos na Etapa 1 (item~\ref{sec:etapa1}), cada um associado a um
+critério próprio, aplicado sobre os resultados obtidos conforme a Etapa 7
+(item~\ref{sec:etapa7}).
+
+\begin{alineas}
+	\item \textbf{Critério de eficiência}
+
+	Como os testes são bilaterais, uma diferença é considerada favorável a uma
+	configuração quando o teste correspondente rejeita a hipótese nula de igualdade, com
+	$p$-valor ajustado pela correção de Holm inferior a $\alpha = 0{,}05$, e a mediana
+	dessa configuração é menor que a da configuração de comparação. Como um custo menor
+	pode resultar do atendimento de menos clientes, a comparação segue uma ordem de
+	prioridade. Primeiro, compara-se a taxa de entregas não atendidas: se a do GA+LS for
+	significativamente menor que a da heurística NN, o GA+LS é considerado superior; se
+	for significativamente maior, não o é. Somente quando não há diferença significativa
+	nessa taxa, inclusive quando todas as observações coincidem, o custo total de
+	deslocamento decide a comparação, e o GA+LS é considerado superior se seu custo for
+	significativamente menor. O objetivo de eficiência é atendido quando o GA+LS é
+	superior à heurística NN segundo essa regra.
+
+	\item \textbf{Critério de viabilidade computacional}
+
+	O GA+LS é considerado computacionalmente viável quando o pior caso do tempo de
+	execução, isto é, o maior tempo observado nas 30 execuções, for inferior a 1500 ms.
+	Adota-se o pior caso, e não a média, porque um sistema de planejamento de rotas
+	urbanas precisa responder dentro do limite em todas as solicitações, e não apenas em
+	média. Por se tratar da comparação de um valor observado com um limite fixo, esse
+	critério não envolve teste de hipótese; a média, o desvio padrão e o intervalo de
+	confiança do tempo são reportados como caracterização complementar.
+
+	\item \textbf{Decisão sobre a hipótese}
+
+	A hipótese central é aceita quando os dois critérios anteriores são atendidos
+	simultaneamente e rejeitada nos demais casos, registrando-se qual deles não foi
+	satisfeito. Um GA+LS superior em qualidade, mas acima do limite de tempo, indica que o
+	ganho obtido não é compatível com a resposta exigida pela aplicação; um GA+LS dentro do
+	limite, mas sem superioridade, indica que o custo computacional adicional não se
+	converte em soluções melhores que as da heurística NN.
+
+	\item \textbf{Critérios complementares}
+
+	Os resultados a seguir não decidem a hipótese central, mas qualificam sua
+	interpretação:
+
+	\begin{itemize}
+		\item a contribuição da busca local é avaliada pela comparação entre GA e GA+LS,
+		segundo a mesma ordem de prioridade do critério de eficiência, com a diferença de
+		tempo de execução entre ambos quantificando o custo computacional do 2-opt e o
+		desvio das janelas de tempo indicando o efeito da busca local sobre a
+		viabilidade das soluções durante a busca;
+		\item a comparação entre o GA e a heurística NN indica se o componente evolutivo,
+		isoladamente, já supera o baseline;
+		\item o \textit{gap} em relação à melhor solução conhecida da instância C101 situa
+		os resultados frente à literatura, sem constituir limiar de aceitação;
+		\item o tamanho de efeito qualifica a relevância prática das diferenças
+		significativas, de modo que uma diferença significativa de pequena magnitude é
+		interpretada com a devida cautela.
+	\end{itemize}
+\end{alineas}
 
 % -----------------------------------------------------------------------------
 \section{Tecnologias utilizadas}
