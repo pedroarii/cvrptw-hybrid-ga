@@ -45,11 +45,13 @@ O repositório tem duas partes:
 
 O texto foi convertido de um PDF para LaTeX, de forma fiel ao original:
 
-- **Escrito:** só o Cap. 3 (Metodologia), seções 3.1 a 3.7.
-- **Vazio:** seções 3.8 a 3.11, que estão marcadas com `% TODO`.
+- **Escrito:** só o Cap. 3 (Metodologia), seções 3.1 a 3.10.
+- **Vazio:** seção 3.11, marcada com `% TODO`.
 - **Placeholders:** Introdução, Fundamentação, Cap. 4 a 7, Resumo e Abstract.
 
-**Próxima tarefa combinada:** escrever as seções 3.8 (Desenho do experimento), 3.9 (Análise dos dados), 3.10 (Critérios e Avaliação da Hipótese) e 3.11 (Tecnologias utilizadas).
+**Próxima tarefa combinada:** escrever a seção 3.11 (Tecnologias utilizadas).
+
+**Regras do 3.10:** eficiência por ordem de prioridade (primeiro a taxa de não atendidos; o custo só decide quando ela não difere significativamente), com Holm e mediana menor; viabilidade pelo **pior caso** inferior a 1500 ms, sem teste de hipótese. A hipótese é aceita só se as duas regras valerem.
 
 ### Cap. 3: inconsistências
 
@@ -59,7 +61,7 @@ As inconsistências da conversão foram corrigidas em 2026-10-27. O registro de 
 **Janela de tempo: modelo C** ([ADR 001](docs/decisoes/001-janela-rigida-ou-flexivel.md)).
 Durante a busca, o AG aceita atraso penalizado com peso 50. Na solução final, a janela é rígida:
 cliente atendido após `l_i` conta como não atendido. O desvio é indicador da busca, não qualidade
-final, e é nulo no NN por construção. Pedro decidiu; falta o grupo validar. O avaliador (M1) deve
+final, e é nulo no NN por construção. Pedro decidiu e Rafael confirmou o modelo C puro, sem tolerância de atraso (2026-10-27); falta o orientador validar. O avaliador (M1) deve
 seguir esse modelo.
 
 **Capacidade: rígida por construção** ([ADR 003](docs/decisoes/003-capacidade-rigida.md)). A
@@ -68,12 +70,11 @@ decodificação e o NN nunca formam rota acima da capacidade. A aptidão só pen
 **Peso 50:** declarado no texto como empírico, com a calibração para trabalhos futuros. Não há
 citação.
 
-**Ainda aberto:** o 3.5 (a) diz que o fator primário tem "dois níveis" (NN e GA+LS), mas o GA puro
-é um terceiro nível, introduzido em (b).
+**Fator primário:** três níveis (NN, GA e GA+LS); o GA é o controle da busca local.
 
 ### Riscos experimentais
 
-- **O limite de 1500 ms provavelmente estoura.** Com população 100 × 150 gerações × 2-opt em Python, o tempo tende a ficar na casa dos segundos. Medir cedo.
+- **O limite de 1500 ms provavelmente estoura. Pendente: medir no spike de tempo do M3.** Com população 100 × 150 gerações × 2-opt em Python, o tempo tende a ficar na casa dos segundos, e o critério é o pior caso das 30 execuções. Se estourar, o grupo decide entre otimizar, reduzir população/gerações ou rever o limite, e ajusta 3.4, 3.5 e 3.10.
 - **Usar só a C101 é fraco.** Ela é fácil e tem frota folgada, então a taxa de não atendidos tende a 0% para todos os algoritmos. Considerar R101/RC101.
 - **Falta a métrica de nº de veículos.** O padrão do Solomon compara primeiro veículos, depois distância.
 
@@ -125,7 +126,7 @@ decisão, preencha o ADR correspondente.
 cd tcc && latexmk main.tex    # gera build/main.pdf
 ```
 
-O PDF deve ter 20 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
+O PDF deve ter 23 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
 
 **Convenções do LaTeX:**
 

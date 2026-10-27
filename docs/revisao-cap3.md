@@ -15,7 +15,7 @@ Legenda: 🔴 conceitual (muda o método) · 🟡 consistência interna · ⚪ f
 | 5 | 🟡 | 3.1 | 14–18 | corrigido |
 | 6 | 🟡 | 3.4 (Etapa 2) | 143–144 | corrigido |
 | 7 | ⚪ | vários | — | corrigido (um subitem mantido, ver abaixo) |
-| 8 | 🟡 | 3.5 (a) | 172–177 | aberto |
+| 8 | 🟡 | 3.5 (a) | 172–177 | corrigido |
 | 9 | 🟡 | 3.5 (b) | 190 | corrigido: valor declarado empírico |
 | 10 | 🟡 | 3.4 e 3.5 (b) | — | corrigido: [ADR 003](decisoes/003-capacidade-rigida.md) |
 
@@ -107,6 +107,9 @@ Na prática o fator tem três níveis.
 **Ação sugerida:** dizer em (a) que o fator tem três níveis (NN, GA e GA+LS) e que o GA serve como
 ablação da busca local. O (b) passa a só justificar o terceiro nível.
 
+**Resolvido (2026-10-27):** o 3.5 (a) passou a listar três níveis, com o GA como controle da
+hibridização. O (b) ficou como estava.
+
 ## 9. Peso 50 sem justificativa
 
 O 3.5 (b) fixa o peso da penalidade de atraso em 50, mas não diz de onde veio o valor. O peso é a
@@ -159,8 +162,11 @@ Compilado: 20 páginas, sem erros nem referências indefinidas; Solomon (1987) a
 
 ## Riscos experimentais (não são erro de texto, mas afetam o capítulo)
 
-- **1500 ms tende a estourar.** 100 indivíduos × 150 gerações × 2-opt em Python deve levar
-  segundos. Medir no M3; se estourar, o critério de viabilidade do 3.4 precisa ser revisto.
+- **1500 ms tende a estourar. Status: pendente (medir no spike de tempo do M3).** 100
+  indivíduos × 150 gerações × 2-opt em Python deve levar segundos. Desde 2026-10-27 o critério
+  é o **pior caso** das 30 execuções (3.4 e 3.10), o que deixa o limite mais difícil de cumprir.
+  Se estourar, o grupo decide entre otimizar a implementação, reduzir população/gerações ou
+  rever o limite, e o 3.4, o 3.5 e o 3.10 precisam ser ajustados.
 - **Só a C101 é fraco.** Ela é fácil e tem frota folgada; não atendidos tende a 0% para todos.
   Ver [ADR 002](decisoes/002-instancias-solomon.md).
 - **Falta a métrica de número de veículos.** O padrão do Solomon compara primeiro veículos,

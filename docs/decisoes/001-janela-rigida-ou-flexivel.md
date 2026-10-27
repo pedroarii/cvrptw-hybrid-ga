@@ -44,6 +44,10 @@ penalizado (peso 50) para explorar melhor o espaço, mas só soluções sem atra
   tratamento das janelas, alíneas "não atendidos" e "desvio") e no 3.5 (peso 50 descrito como
   penalidade da função de aptidão durante a busca). O Cap. 4 precisa formalizar a função de
   aptidão penalizada e o passo de viabilização.
+- **Análise (3.8 e 3.9):** a frase "tolerância máxima de 15 minutos" saiu do 3.8 (Rafael
+  confirmou o modelo C puro, sem tolerância). No 3.9, o desvio é comparado só entre GA e GA+LS
+  (no NN é nulo por construção), o que reduz a correção de Holm para 10 comparações. O custo é
+  sempre lido junto com a taxa de não atendidos, porque retirar clientes atrasados encurta a rota.
 - **Avaliador (M1):** devolve custo, atraso acumulado, clientes atrasados e violação de
   capacidade separadamente. A fitness combina esses valores com o peso; a viabilização remove os
   clientes atrasados e os conta como não atendidos. Os testes cobrem os dois caminhos.
