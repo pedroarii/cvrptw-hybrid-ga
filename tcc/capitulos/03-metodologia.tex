@@ -13,9 +13,11 @@ Esta pesquisa adota o \textbf{delineamento experimental computacional}, estrutur
 segundo o processo sistemático de avaliação de desempenho proposto por
 \citeonline{jain1991} em sete etapas sequenciais: definição do sistema e objetivos;
 seleção de métricas; identificação de fatores e níveis; escolha da técnica de
-avaliação; desenho do experimento; execução e análise dos dados; e apresentação dos
-resultados. Cada etapa corresponde a uma seção própria deste capítulo, conferindo
-rastreabilidade e reprodutibilidade ao trabalho.
+avaliação; seleção das instâncias de teste; desenho do experimento; e análise dos
+dados. Cada etapa corresponde a uma seção própria deste capítulo, seguidas pelos
+critérios de avaliação da hipótese e pelas tecnologias utilizadas, conferindo
+rastreabilidade e reprodutibilidade ao trabalho. A apresentação e a discussão dos
+resultados são realizadas no \autoref{cap:resultados}.
 
 A pesquisa desenvolve-se em duas fases complementares. A \textbf{primeira fase}, de
 natureza bibliográfica, compreende o levantamento e a análise das referências que
@@ -23,7 +25,8 @@ fundamentam as decisões de modelagem: teoria de otimização combinatória, o P
 Roteamento de Veículos com Janelas de Tempo (\textit{CVRPTW}) e o estado da arte em
 meta-heurísticas evolutivas aplicadas à logística urbana. A \textbf{segunda fase}, de
 natureza experimental, submete os algoritmos propostos a um protocolo de
-\textit{benchmarking} sobre instâncias sintéticas calibradas, gerando os dados
+\textit{benchmarking} sobre instâncias padronizadas do \textit{benchmark} de
+\citeonline{solomon1987}, gerando os dados
 quantitativos que sustentam a avaliação da hipótese central.
 
 % -----------------------------------------------------------------------------
@@ -48,9 +51,8 @@ experimento.
 
 Quanto à abordagem, a pesquisa é \textbf{quantitativa}: todos os dados produzidos
 pelas execuções são numéricos e submetidos a tratamento estatístico formal, incluindo
-estatísticas descritivas, intervalos de confiança, testes de hipótese
-não-paramétricos e análise fatorial completa dos parâmetros do Algoritmo Genético,
-conforme prescrito por \citeonline{jain1991}.
+estatísticas descritivas, intervalos de confiança e testes de hipótese
+não-paramétricos, conforme prescrito por \citeonline{jain1991}.
 
 % -----------------------------------------------------------------------------
 \section{Etapa 1 - Definição do Sistema e Objetivos}
@@ -63,16 +65,14 @@ processa instâncias do problema contendo as informações necessárias para o
 planejamento das rotas e gera soluções que respeitam as restrições de capacidade dos
 veículos e das janelas de tempo dos clientes.
 
-Os objetivos concentram-se na comparação busca verificar se a abordagem híbrida é
+Os objetivos concentram-se em verificar, por meio de comparação experimental, se a
+abordagem híbrida é
 capaz de produzir soluções de melhor qualidade para o CVRPTW, reduzindo custos
 operacionais e aumentando a eficiência do atendimento sem comprometer o desempenho
 computacional exigido para aplicações práticas de logística urbana.
 
-Objetivos da avaliação
-
-A avaliação experimental é conduzida a partir de duas dimensões de desempenho:
-
-Os dois objetivos do experimento são:
+A avaliação experimental é conduzida a partir de duas dimensões de desempenho, que
+correspondem aos dois objetivos do experimento:
 
 \begin{alineas}
 	\item \textbf{Objetivo de eficiência}: Avaliar se o Algoritmo Genético Híbrido
@@ -106,16 +106,30 @@ gulosa do Vizinho Mais Próximo, adotada como baseline.
 Das instâncias processadas por cada algoritmo --- compostas pelos dados de entrada
 (coordenadas, demandas, janelas de tempo e frota), pelo processamento realizado até a
 construção da rota e pela saída correspondente ao conjunto de rotas gerado --- são
-extraídas quatro métricas: o custo total de deslocamento e a taxa de entregas não
-atendidas, obtidos a partir da saída de cada execução, e o tempo de execução e o
-desvio das janelas de tempo, associados ao esforço de processamento necessário para
-produzir a solução.
+extraídas quatro métricas, de naturezas distintas. O custo total de deslocamento e a
+taxa de entregas não atendidas medem a qualidade da solução final e são obtidos a
+partir da saída de cada execução. O desvio das janelas de tempo é um indicador do
+processo de busca, que registra quanto a melhor solução encontrada violou as janelas
+antes de sua viabilização. O tempo de execução é a única métrica de esforço
+computacional, associada ao processamento necessário para produzir a solução.
+
+Quanto às janelas de tempo, adota-se o seguinte tratamento: durante a busca, o
+Algoritmo Genético admite soluções com atendimentos após o limite da janela,
+penalizando o atraso na função de aptidão, o que amplia a exploração do espaço de
+soluções; na solução final reportada, porém, as janelas são tratadas como restrições
+rígidas, de modo que todo cliente atendido após o limite de sua janela é contabilizado
+como não atendido. Esse tratamento mantém a solução final comparável às soluções de
+referência do \textit{benchmark}, que consideram janelas rígidas. A restrição de
+capacidade, por sua vez, é tratada como rígida em todas as fases: a decodificação dos
+indivíduos do Algoritmo Genético, assim como a construção das rotas pela heurística do
+Vizinho Mais Próximo, nunca forma rotas cuja demanda total exceda a capacidade do
+veículo, dispensando penalização para essa restrição.
 
 Cada uma dessas métricas é detalhada a seguir, contemplando sua definição, o critério
 de comparação entre os algoritmos e o procedimento utilizado para sua obtenção.
 
 \begin{alineas}
-	\item \textbf{Custo total de deslocamento da frotal}: O custo total de deslocamento
+	\item \textbf{Custo total de deslocamento da frota}: O custo total de deslocamento
 	corresponde à distância acumulada percorrida pela frota na execução das rotas
 	geradas, traduzindo diretamente o objetivo de minimização do custo operacional do
 	problema de roteamento. O desempenho será comparado considerando que menores
@@ -130,7 +144,8 @@ de comparação entre os algoritmos e o procedimento utilizado para sua obtenç�
 	rígidas de capacidade e de janela de tempo. O desempenho será considerado superior
 	quando o algoritmo apresentar menores taxas de entregas não atendidas. Sua obtenção
 	consiste em contar, ao final de cada execução, os clientes não alocados a nenhuma
-	rota viável e dividir esse número pelo total de clientes da instância.
+	rota viável --- incluindo os que seriam atendidos após o limite de sua janela de
+	tempo --- e dividir esse número pelo total de clientes da instância.
 
 	\item \textbf{Tempo de execução computacional}: O tempo de execução corresponde ao
 	intervalo necessário para que o algoritmo produza uma solução completa para uma
@@ -141,18 +156,22 @@ de comparação entre os algoritmos e o procedimento utilizado para sua obtenç�
 	1500 ms por instância. Sua medição é feita cronometrando o intervalo entre o
 	recebimento da instância e a produção da solução final, registrado em
 	milissegundos a cada execução. Os três valores obtidos são comparados entre a
-	heurística do Vizinho Mais Próximo e o Algoritmo Genético Híbrido (GA+LS),
-	compondo a base da avaliação experimental apresentada nos capítulos seguintes.
+	heurística do Vizinho Mais Próximo, o Algoritmo Genético puro (GA) e o Algoritmo
+	Genético Híbrido (GA+LS), o que permite também quantificar o custo computacional
+	acrescentado pela busca local, compondo a base da avaliação experimental
+	apresentada nos capítulos seguintes.
 
 	\item \textbf{Desvio das janelas de tempo}: O desvio das janelas de tempo representa
-	o tempo de atraso acumulado nos atendimentos realizados fora do horário limite
-	estabelecido, aplicável nos casos em que o modelo permite tolerância de atendimento
-	com penalização, em vez de descartar o cliente como não atendido. O desempenho será
-	considerado superior quando o algoritmo apresentar menores valores de desvio
-	acumulado, indicando maior aderência aos horários programados. Para sua obtenção,
-	calcula-se a diferença entre o horário de atendimento efetivamente realizado e o
-	horário limite da janela de cada cliente, somando-se os desvios de todos os
-	atendimentos com atraso ao final de cada execução.
+	o tempo de atraso acumulado nos atendimentos realizados após o horário limite
+	estabelecido na melhor solução encontrada pela busca, antes que os clientes
+	atendidos com atraso sejam contabilizados como não atendidos. Trata-se de um
+	indicador do processo de busca, e não da qualidade da solução final: valores
+	menores indicam que a penalização conduziu a busca a soluções mais próximas da
+	viabilidade. Para sua obtenção, calcula-se a diferença entre o horário de
+	atendimento e o horário limite da janela de cada cliente, somando-se os desvios de
+	todos os atendimentos com atraso ao final de cada execução. Na heurística do
+	Vizinho Mais Próximo, que insere clientes somente quando a inserção é viável, esse
+	valor é nulo por construção.
 \end{alineas}
 
 % -----------------------------------------------------------------------------
@@ -180,16 +199,22 @@ variação introduza ruído estatístico e comprometa a validade interna do expe
 
 	Os seguintes parâmetros de configuração do Algoritmo Genético Híbrido são fixados
 	em um valor único para todas as execuções deste trabalho, reservando a investigação
-	sistemática de seus efeitos sobre o desempenho para trabalhos futuros (item 8):
+	sistemática de seus efeitos sobre o desempenho para trabalhos futuros:
 
 	\begin{itemize}
 		\item Tamanho da população: 100 indivíduos;
 		\item Número de gerações: 150;
 		\item Taxa de crossover: 0,8;
 		\item Taxa de mutação: 0,1;
-		\item Peso da penalidade de desvio de janela de tempo na função objetivo: 50;
+		\item Peso da penalidade de desvio de janela de tempo na função de aptidão,
+		aplicado durante a busca: 50;
 		\item Uso da busca local (2-opt): ativa.
 	\end{itemize}
+
+	O peso da penalidade de desvio de janela de tempo foi definido empiricamente, de
+	modo a tornar o atraso significativamente mais custoso que o acréscimo de distância
+	sem impedir que a busca atravesse soluções temporariamente inviáveis. A calibração
+	desse valor, assim como a dos demais parâmetros, será avaliada em trabalhos futuros.
 
 	Para o fator ``uso da busca local'', contudo, adota-se um nível adicional de
 	controle: a desativação completa do componente de busca local, reduzindo o
@@ -200,7 +225,7 @@ variação introduza ruído estatístico e comprometa a validade interna do expe
 
 	\item \textbf{Fatores relativos à instância do problema}
 
-	Constitui fator adicional a instância do benchmark de Solomon (1987) sobre a qual os
+	Constitui fator adicional a instância do benchmark de \citeonline{solomon1987} sobre a qual os
 	algoritmos são executados, pertencente ao grupo C1, caracterizado por clientes com
 	distribuição espacial agrupada e janelas de tempo amplas. A capacidade do veículo e
 	o número de clientes atendidos são determinados pela especificação oficial da
@@ -218,8 +243,7 @@ variação introduza ruído estatístico e comprometa a validade interna do expe
 		conforme necessário à obtenção de média, desvio padrão e aplicação dos testes de
 		hipótese não-paramétricos previstos no item~\ref{sec:natureza};
 		\item Critério de parada do Algoritmo Genético, definido como número fixo de
-		gerações, exceto nas execuções em que este parâmetro constitui o próprio fator
-		sob análise.
+		gerações.
 	\end{itemize}
 
 	A semente de geração de números aleatórios (\textit{seed}) constitui exceção
@@ -243,11 +267,11 @@ problemas NP-difíceis, para os quais não existe expressão fechada capaz de pr
 tempo computacionalmente viável, a qualidade das soluções produzidas pelas heurísticas
 e meta-heurísticas avaliadas. Ainda assim, a modelagem analítica fundamenta as
 equações de custo, as restrições de capacidade e janela de tempo, e a função objetivo
-do Algoritmo Genético Híbrido, já apresentadas nas seções anteriores deste capítulo.
+do Algoritmo Genético Híbrido, apresentadas no \autoref{cap:modelagem}.
 
 Adota-se, portanto, a combinação de simulação e medição direta. A simulação consiste na
 execução dos algoritmos sobre instâncias sintéticas e padronizadas do benchmark de
-Solomon (1987), que reproduzem de forma controlada padrões realistas de distribuição
+\citeonline{solomon1987}, que reproduzem de forma controlada padrões realistas de distribuição
 espacial de clientes, demandas e janelas de tempo observados em operações de logística
 urbana, sem depender da coleta de dados operacionais de uma empresa específica. A
 medição direta consiste na obtenção das quatro métricas definidas na Etapa 2 --- custo
@@ -266,14 +290,14 @@ arte da área de roteamento de veículos.
 \label{sec:etapa5}
 
 A condução dos experimentos deste trabalho utiliza a instância C101 do benchmark de
-Solomon (1987), pertencente ao grupo C1 definido como fator na Etapa 3
+\citeonline{solomon1987}, pertencente ao grupo C1 definido como fator na Etapa 3
 (item~\ref{sec:etapa3}), caracterizado por clientes com distribuição espacial agrupada
 e janelas de tempo amplas. A \autoref{tab:instancias} resume as características da
 instância utilizada.
 
 \begin{table}[htb]
 	\centering
-	\caption{Instância do benchmark de Solomon (1987) utilizada nos testes}
+	\caption{Instância do benchmark de \citeonline{solomon1987} utilizada nos testes}
 	\label{tab:instancias}
 	\begin{tabular}{ccccl}
 		\toprule
