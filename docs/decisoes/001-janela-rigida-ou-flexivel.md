@@ -2,7 +2,7 @@
 
 - **Status:** decidido (opção C), pendente de validação do grupo
 - **Data:** 2026-10-27
-- **Decisores:** Eduardo, Esther, Rafael (com o orientador)
+- **Decisores:** Rafael (com o orientador)
 
 ## Contexto
 
@@ -30,7 +30,7 @@ penalizado (peso 50) para explorar melhor o espaço, mas só soluções sem atra
 
 ## Decisão
 
-**Opção C**, decidida por Pedro em 2026-10-27. Falta o grupo e o orientador validarem.
+**Opção C**, decidida em 2026-10-27. Falta o orientador validar.
 
 - Durante a busca, o atraso é permitido e penalizado na função de aptidão com peso 50.
 - Na solução final reportada, a janela é rígida. Todo cliente atendido após `l_i` conta como

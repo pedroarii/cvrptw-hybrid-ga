@@ -6,9 +6,9 @@ Contexto para o Claude Code neste repositório. Leia antes de qualquer tarefa.
 
 TCC de Ciência da Computação (UNIP Brasília, 2026): **"Algoritmo Genético Híbrido para o CVRPTW em Logística Urbana de Última Milha"**.
 
-- **Autores:** Eduardo Gabriel de Sales Rodrigues, Esther Chen, Rafael Silva dos Santos (Fael).
+- **Autor:** Rafael Silva dos Santos (Fael).
 - **Orientador:** Prof. Me. Fabricio Rodrigues Freire.
-- **Quem está trabalhando aqui:** Pedro, dev fullstack (TS/Node/React/Java), que entrou para ajudar o Fael. Ele fala português, prefere comunicação direta e avaliação honesta, sem rodeios.
+- **Comunicação:** em português, direta e com avaliação honesta, sem rodeios.
 
 **Pergunta central:** um Algoritmo Genético com busca local 2-opt (GA+LS) gera rotas melhores que a heurística gulosa do Vizinho Mais Próximo (NN) para o CVRPTW, sem passar de 1500 ms por instância?
 
@@ -62,7 +62,7 @@ As inconsistências da conversão foram corrigidas em 2026-10-27. O registro de 
 **Janela de tempo: modelo C** ([ADR 001](docs/decisoes/001-janela-rigida-ou-flexivel.md)).
 Durante a busca, o AG aceita atraso penalizado com peso 50. Na solução final, a janela é rígida:
 cliente atendido após `l_i` conta como não atendido. O desvio é indicador da busca, não qualidade
-final, e é nulo no NN por construção. Pedro decidiu e Rafael confirmou o modelo C puro, sem tolerância de atraso (2026-10-27); falta o orientador validar. O avaliador (M1) deve
+final, e é nulo no NN por construção. Rafael confirmou o modelo C puro, sem tolerância de atraso (2026-10-27); falta o orientador validar. O avaliador (M1) deve
 seguir esse modelo.
 
 **Capacidade: rígida por construção** ([ADR 003](docs/decisoes/003-capacidade-rigida.md)). A

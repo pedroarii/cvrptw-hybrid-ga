@@ -2,7 +2,7 @@
 
 - **Status:** em aberto
 - **Data:** 2026-10-27
-- **Decisores:** Eduardo, Esther, Rafael (com o orientador)
+- **Decisores:** Rafael (com o orientador)
 
 ## Contexto
 
