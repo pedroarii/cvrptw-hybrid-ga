@@ -485,4 +485,64 @@ critério próprio, aplicado sobre os resultados obtidos conforme a Etapa 7
 \section{Tecnologias utilizadas}
 \label{sec:tecnologias}
 
-% TODO: escrever
+As ferramentas descritas a seguir compõem o ambiente de implementação e execução do
+experimento. Como a linguagem, a biblioteca de otimização evolutiva e o ambiente de
+hardware constituem fatores fixos da avaliação (Etapa 3, item~\ref{sec:etapa3}), suas
+versões são mantidas inalteradas em todas as execuções.
+
+\begin{alineas}
+	\item \textbf{Linguagem de programação}
+
+	Os três algoritmos são implementados na linguagem Python, versão 3.14, escolhida pela
+	disponibilidade de bibliotecas consolidadas de computação científica e de otimização
+	evolutiva. As versões de todas as dependências são registradas em arquivo de
+	travamento do gerenciador de pacotes \textit{uv}, o que permite reproduzir o mesmo
+	ambiente em qualquer máquina. O tempo de execução é medido com o relógio monotônico de
+	alta resolução da biblioteca padrão da linguagem (\texttt{time.perf\_counter}), não
+	sujeito a ajustes do relógio do sistema.
+
+	\item \textbf{Biblioteca de otimização evolutiva}
+
+	O Algoritmo Genético, nas configurações GA e GA+LS, é construído com a biblioteca DEAP
+	(\textit{Distributed Evolutionary Algorithms in Python}) \cite{fortin2012}, que
+	fornece as estruturas de indivíduo e população, os operadores de seleção, cruzamento e
+	mutação e o controle do ciclo de gerações. A decodificação dos cromossomos em rotas, a
+	função de aptidão, a busca local 2-opt e a heurística do Vizinho Mais Próximo são
+	implementadas pelos autores, de modo que as regras de tratamento das janelas de tempo
+	e da capacidade definidas na Etapa 2 (item~\ref{sec:etapa2}) sejam aplicadas de forma
+	idêntica nas três configurações.
+
+	\item \textbf{Bibliotecas de apoio}
+
+	A biblioteca NumPy \cite{harris2020} é utilizada no armazenamento da matriz de
+	distâncias entre os pontos da instância, calculada uma única vez antes de cada
+	execução. A análise dos dados descrita na Etapa 7 (item~\ref{sec:etapa7}) emprega a
+	biblioteca SciPy \cite{virtanen2020}, para os testes de Wilcoxon e de Mann-Whitney e
+	para o cálculo dos intervalos de confiança por \textit{bootstrap}; a biblioteca pandas
+	\cite{mckinney2010}, para a organização dos registros de cada execução; e a biblioteca
+	Matplotlib \cite{hunter2007}, para a produção dos gráficos apresentados nos
+	resultados.
+
+	\item \textbf{Testes automatizados}
+
+	Os componentes do sistema, em especial o avaliador de soluções, responsável pelo
+	cálculo das métricas da Etapa 2 (item~\ref{sec:etapa2}), são verificados por testes
+	automatizados escritos com o \textit{framework} pytest, de modo que o cálculo do custo,
+	da taxa de entregas não atendidas e do desvio das janelas de tempo seja conferido em
+	casos de resultado conhecido antes da execução do experimento.
+
+	\item \textbf{Ambiente de hardware}
+
+	Todas as execuções são realizadas em um único computador, com processador
+	% TODO: definir com o grupo a máquina do experimento final e preencher
+	\textbf{[a definir]}, memória RAM de \textbf{[a definir]} e sistema operacional
+	\textbf{[a definir]}.
+
+	\item \textbf{Documentação e controle de versão}
+
+	O código-fonte, as instâncias, os resultados brutos e o texto deste trabalho são
+	mantidos em um repositório Git hospedado no GitHub, o que registra o histórico de
+	alterações e permite associar cada resultado à versão do código que o produziu. O
+	texto é escrito em \LaTeX{}, com a classe abn\TeX{}2, e os gráficos e tabelas de
+	resultados são gerados diretamente pelos programas de análise.
+\end{alineas}
