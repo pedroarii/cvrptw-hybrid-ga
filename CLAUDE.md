@@ -51,18 +51,25 @@ O texto foi convertido de um PDF para LaTeX, de forma fiel ao original:
 
 **Próxima tarefa combinada:** escrever as seções 3.8 (Desenho do experimento), 3.9 (Análise dos dados), 3.10 (Critérios e Avaliação da Hipótese) e 3.11 (Tecnologias utilizadas).
 
-### Problemas conhecidos no Cap. 3 (ainda não corrigidos)
+### Cap. 3: inconsistências
 
-1. **Janela de tempo rígida ou flexível?** A conclusão e a métrica de "não atendidos" dizem que é rígida. A métrica de desvio e o peso de penalidade 50 pressupõem que é flexível. Isso precisa ser decidido com o grupo.
-2. **O 3.4 classifica o "desvio de janela" como esforço de processamento.** Está errado: o desvio é qualidade da solução. Só o tempo de execução mede esforço.
-3. **O 3.2 promete "análise fatorial completa dos parâmetros do AG", mas o 3.5 fixa os parâmetros.** O 3.5 ainda cita um "item 8" que não existe e tem a frase "exceto nas execuções em que este parâmetro constitui o próprio fator".
-4. **O 3.6 diz que as equações de custo e a função objetivo "já foram apresentadas" no capítulo.** Não foram; elas vão para o Cap. 4.
-5. **As 7 etapas listadas no 3.1 não batem com a numeração das seções.**
-6. **Erros de forma:**
-   - "frotal" no 3.4 (a);
-   - frase quebrada no 3.3 ("concentram-se na comparação busca verificar");
-   - introdução da lista de objetivos duplicada no 3.3;
-   - Solomon (1987) é citado mas não aparece nas Referências.
+As inconsistências da conversão foram corrigidas em 2026-10-27. O registro de cada uma está em
+`docs/revisao-cap3.md`.
+
+**Janela de tempo: modelo C** ([ADR 001](docs/decisoes/001-janela-rigida-ou-flexivel.md)).
+Durante a busca, o AG aceita atraso penalizado com peso 50. Na solução final, a janela é rígida:
+cliente atendido após `l_i` conta como não atendido. O desvio é indicador da busca, não qualidade
+final, e é nulo no NN por construção. Pedro decidiu; falta o grupo validar. O avaliador (M1) deve
+seguir esse modelo.
+
+**Capacidade: rígida por construção** ([ADR 003](docs/decisoes/003-capacidade-rigida.md)). A
+decodificação e o NN nunca formam rota acima da capacidade. A aptidão só penaliza o atraso.
+
+**Peso 50:** declarado no texto como empírico, com a calibração para trabalhos futuros. Não há
+citação.
+
+**Ainda aberto:** o 3.5 (a) diz que o fator primário tem "dois níveis" (NN e GA+LS), mas o GA puro
+é um terceiro nível, introduzido em (b).
 
 ### Riscos experimentais
 
@@ -118,7 +125,7 @@ decisão, preencha o ADR correspondente.
 cd tcc && latexmk main.tex    # gera build/main.pdf
 ```
 
-O PDF deve ter 19 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
+O PDF deve ter 20 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
 
 **Convenções do LaTeX:**
 
