@@ -45,11 +45,12 @@ O repositório tem duas partes:
 
 O texto foi convertido de um PDF para LaTeX, de forma fiel ao original:
 
-- **Escrito:** só o Cap. 3 (Metodologia), seções 3.1 a 3.10.
-- **Vazio:** seção 3.11, marcada com `% TODO`.
+- **Escrito:** só o Cap. 3 (Metodologia), seções 3.1 a 3.11. No 3.11, o hardware do experimento está como `[a definir]` (`% TODO`), até o grupo escolher a máquina.
 - **Placeholders:** Introdução, Fundamentação, Cap. 4 a 7, Resumo e Abstract.
 
-**Próxima tarefa combinada:** escrever a seção 3.11 (Tecnologias utilizadas).
+**Próxima tarefa combinada:** decidir as instâncias (ADR 002, issue #7) e começar o M1.
+
+**Tecnologias (3.11):** Python 3.14 com `uv` (lockfile), DEAP, NumPy, SciPy, pandas, Matplotlib e pytest; tempo medido com `time.perf_counter`.
 
 **Regras do 3.10:** eficiência por ordem de prioridade (primeiro a taxa de não atendidos; o custo só decide quando ela não difere significativamente), com Holm e mediana menor; viabilidade pelo **pior caso** inferior a 1500 ms, sem teste de hipótese. A hipótese é aceita só se as duas regras valerem.
 
@@ -126,7 +127,7 @@ decisão, preencha o ADR correspondente.
 cd tcc && latexmk main.tex    # gera build/main.pdf
 ```
 
-O PDF deve ter 23 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
+O PDF deve ter 24 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
 
 **Convenções do LaTeX:**
 
