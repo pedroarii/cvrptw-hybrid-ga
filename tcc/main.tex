@@ -1,0 +1,120 @@
+% =============================================================================
+% TCC — Algoritmo Genético Híbrido para o CVRPTW em Logística Urbana de Última Milha
+% Universidade Paulista (UNIP) — Ciência da Computação — Campus Brasília
+%
+% Arquivo principal. Compile com:  latexmk main.tex   (ou pela extensão LaTeX Workshop)
+% Cada capítulo fica em capitulos/, os elementos pré-textuais em pretextual/.
+% =============================================================================
+
+\documentclass[
+	12pt,
+	openright,
+	oneside,
+	a4paper,
+	english,
+	brazil
+]{abntex2}
+
+% -----------------------------------------------------------------------------
+% Pacotes
+% -----------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}          % Times (mesma fonte do PDF original)
+\usepackage{indentfirst}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{booktabs}          % regras das tabelas
+\usepackage{amsmath}
+\usepackage[alf,abnt-emphasize=bf]{abntex2cite}  % citações autor-data (ABNT), títulos em negrito
+
+% -----------------------------------------------------------------------------
+% Dados do trabalho
+% -----------------------------------------------------------------------------
+\titulo{Algoritmo Genético Híbrido para o CVRPTW em Logística Urbana de Última Milha}
+\autor{Eduardo Gabriel de Sales Rodrigues \\ Esther Chen \\ Rafael Silva dos Santos}
+\local{Brasília --- DF}
+\data{2026}
+\orientador{Prof. Me. Fabricio Rodrigues Freire}
+\instituicao{Universidade Paulista --- UNIP}
+\tipotrabalho{Trabalho de Conclusão de Curso}
+\preambulo{Trabalho de Curso apresentado para obtenção do título de Bacharel em
+Ciência da Computação da Universidade Paulista --- UNIP, Campus Brasília.}
+
+% -----------------------------------------------------------------------------
+% Metadados do PDF
+% -----------------------------------------------------------------------------
+\definecolor{blue}{RGB}{41,5,195}
+\makeatletter
+\hypersetup{
+	pdftitle={\@title},
+	pdfauthor={Eduardo Gabriel de Sales Rodrigues, Esther Chen, Rafael Silva dos Santos},
+	pdfsubject={\imprimirpreambulo},
+	pdfcreator={LaTeX with abntex2},
+	pdfkeywords={abnt}{latex}{unip}{ciência da computação}{CVRPTW}{algoritmo genético híbrido}{busca local}{heurística gulosa}{otimização combinatória},
+	colorlinks=false,
+	pdfborder={0 0 0},
+	bookmarksdepth=4
+}
+\makeatother
+
+% Fontes dos títulos: Times em negrito (padrão do abnTeX2 é sem serifa)
+\renewcommand{\ABNTEXchapterfont}{\rmfamily\bfseries}
+
+% Recuo das alíneas a), b), c)...
+\setlist[alineas,1]{label={\alph*)},topsep=0pt,itemsep=0pt,leftmargin=29pt}
+
+% Espaçamento entre as assinaturas da banca
+\setlength{\ABNTEXsignskip}{1.92cm}
+
+% Espaçamento após o indicador de seção e parágrafos
+\setlength{\parindent}{1.3cm}
+\setlength{\parskip}{0cm}
+
+\makeindex
+
+% =============================================================================
+\begin{document}
+
+\selectlanguage{brazil}
+\frenchspacing
+
+% ----------------------------------------------------------
+% Elementos pré-textuais
+% ----------------------------------------------------------
+\input{pretextual/capa}
+\setcounter{page}{2} % a capa conta como página 1
+\input{pretextual/folha-aprovacao}
+\input{pretextual/resumo}
+\input{pretextual/abstract}
+
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% ----------------------------------------------------------
+% Elementos textuais
+% ----------------------------------------------------------
+\textual
+
+\input{capitulos/01-introducao}
+\input{capitulos/02-fundamentacao}
+\input{capitulos/03-metodologia}
+\input{capitulos/04-modelagem}
+\input{capitulos/05-implementacao}
+\input{capitulos/06-resultados}
+\input{capitulos/07-conclusao}
+
+% ----------------------------------------------------------
+% Elementos pós-textuais
+% ----------------------------------------------------------
+\postextual
+
+\bibliography{referencias}
+
+\begin{apendicesenv}
+\input{apendices/apendice-a-algoritmos}
+\end{apendicesenv}
+
+\end{document}

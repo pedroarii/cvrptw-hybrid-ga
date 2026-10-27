@@ -1,0 +1,28 @@
+{
+  // Extensão recomendada: LaTeX Workshop (James-Yu.latex-workshop)
+  "latex-workshop.latex.recipe.default": "latexmk",
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk",
+      "tools": ["latexmk"]
+    }
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": ["-synctex=1", "-interaction=nonstopmode", "-file-line-error", "%DOC%"],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.rootFile.useSubFile": false,
+  "latex-workshop.latex.search.rootFiles.include": ["tcc/main.tex"],
+  "latex-workshop.latex.outDir": "%DIR%/build",
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.view.pdf.viewer": "tab",
+  "files.encoding": "utf8",
+  "[latex]": {
+    "editor.wordWrap": "on"
+  },
+  "cSpell.language": "pt-BR,en"
+}

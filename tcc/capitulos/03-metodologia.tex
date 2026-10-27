@@ -1,0 +1,313 @@
+% =============================================================================
+% Capítulo 3 — Metodologia
+% Estruturado segundo as etapas de avaliação de desempenho de Jain (1991).
+% =============================================================================
+\chapter{METODOLOGIA}
+\label{cap:metodologia}
+
+% -----------------------------------------------------------------------------
+\section{Delineamento da Pesquisa}
+\label{sec:delineamento}
+
+Esta pesquisa adota o \textbf{delineamento experimental computacional}, estruturado
+segundo o processo sistemático de avaliação de desempenho proposto por
+\citeonline{jain1991} em sete etapas sequenciais: definição do sistema e objetivos;
+seleção de métricas; identificação de fatores e níveis; escolha da técnica de
+avaliação; desenho do experimento; execução e análise dos dados; e apresentação dos
+resultados. Cada etapa corresponde a uma seção própria deste capítulo, conferindo
+rastreabilidade e reprodutibilidade ao trabalho.
+
+A pesquisa desenvolve-se em duas fases complementares. A \textbf{primeira fase}, de
+natureza bibliográfica, compreende o levantamento e a análise das referências que
+fundamentam as decisões de modelagem: teoria de otimização combinatória, o Problema de
+Roteamento de Veículos com Janelas de Tempo (\textit{CVRPTW}) e o estado da arte em
+meta-heurísticas evolutivas aplicadas à logística urbana. A \textbf{segunda fase}, de
+natureza experimental, submete os algoritmos propostos a um protocolo de
+\textit{benchmarking} sobre instâncias sintéticas calibradas, gerando os dados
+quantitativos que sustentam a avaliação da hipótese central.
+
+% -----------------------------------------------------------------------------
+\section{Natureza e Classificação da Pesquisa}
+\label{sec:natureza}
+
+Quanto à natureza, a pesquisa classifica-se como \textbf{aplicada} \cite{gil2022}: seu
+produto é um motor de otimização de rotas concebido para sistemas de logística urbana
+com restrições de capacidade e janelas de tempo, com potencial direto de implantação
+em operações de entrega de última milha. A contribuição técnico-científica reside na
+adaptação formal do \textit{Capacitated Vehicle Routing Problem with Time Windows}
+(CVRPTW) ao contexto de entregas urbanas com clusters de demanda, incorporando à
+avaliação comparativa duas dimensões operacionais: a taxa de entregas não atendidas e
+o custo total de deslocamento da frota.
+
+Quanto aos objetivos, a pesquisa é \textbf{experimental}: define variáveis
+independentes controladas pelo experimentador --- os algoritmos de roteamento e as
+configurações de parâmetros do Algoritmo Genético Híbrido ---, variáveis dependentes
+mensuráveis --- as métricas de eficiência e viabilidade computacional --- e variáveis
+controladas fixadas em todas as execuções para garantir a validade interna do
+experimento.
+
+Quanto à abordagem, a pesquisa é \textbf{quantitativa}: todos os dados produzidos
+pelas execuções são numéricos e submetidos a tratamento estatístico formal, incluindo
+estatísticas descritivas, intervalos de confiança, testes de hipótese
+não-paramétricos e análise fatorial completa dos parâmetros do Algoritmo Genético,
+conforme prescrito por \citeonline{jain1991}.
+
+% -----------------------------------------------------------------------------
+\section{Etapa 1 - Definição do Sistema e Objetivos}
+\label{sec:etapa1}
+
+O sistema definido consiste em um motor computacional de otimização de rotas para o
+Problema de Roteamento de Veículos Capacitados com Janelas de Tempo (CVRPTW),
+desenvolvido para apoiar operações de logística urbana de última milha. O sistema
+processa instâncias do problema contendo as informações necessárias para o
+planejamento das rotas e gera soluções que respeitam as restrições de capacidade dos
+veículos e das janelas de tempo dos clientes.
+
+Os objetivos concentram-se na comparação busca verificar se a abordagem híbrida é
+capaz de produzir soluções de melhor qualidade para o CVRPTW, reduzindo custos
+operacionais e aumentando a eficiência do atendimento sem comprometer o desempenho
+computacional exigido para aplicações práticas de logística urbana.
+
+Objetivos da avaliação
+
+A avaliação experimental é conduzida a partir de duas dimensões de desempenho:
+
+Os dois objetivos do experimento são:
+
+\begin{alineas}
+	\item \textbf{Objetivo de eficiência}: Avaliar se o Algoritmo Genético Híbrido
+	(GA+LS) supera a heurística do Vizinho Mais Próximo, utilizada como baseline, na
+	resolução do CVRPTW. A eficiência será medida por meio do custo total de
+	deslocamento da frota e da taxa de entregas não atendidas, buscando identificar a
+	capacidade do algoritmo híbrido de produzir soluções com menor custo operacional e
+	maior nível de atendimento aos clientes.
+
+	\item \textbf{Objetivo de viabilidade computacional}: A viabilidade computacional do
+	Algoritmo Genético Híbrido será avaliada a partir do tempo de execução necessário
+	para obtenção da solução pelo algoritmo. O tempo de execução será medido em todas
+	as instâncias experimentais, considerando múltiplas execuções independentes para
+	obtenção da média, variabilidade e pior caso observado. Como critério de
+	viabilidade, será adotado um limite máximo de 1500 ms por instância, considerando
+	que sistemas de planejamento de rotas urbanas devem fornecer respostas em tempo
+	reduzido para permitir a geração ou atualização das rotas sem comprometer o
+	processo operacional.
+\end{alineas}
+
+% -----------------------------------------------------------------------------
+\section{Etapa 2 - Seleção das métricas}
+\label{sec:etapa2}
+
+De acordo com \citeonline{jain1991}, a seleção das métricas consiste em definir os
+critérios que permitem avaliar o desempenho do sistema frente aos objetivos
+estabelecidos. Neste trabalho, essas métricas são utilizadas para comparar o motor de
+otimização proposto, baseado no Algoritmo Genético Híbrido (GA+LS), com a heurística
+gulosa do Vizinho Mais Próximo, adotada como baseline.
+
+Das instâncias processadas por cada algoritmo --- compostas pelos dados de entrada
+(coordenadas, demandas, janelas de tempo e frota), pelo processamento realizado até a
+construção da rota e pela saída correspondente ao conjunto de rotas gerado --- são
+extraídas quatro métricas: o custo total de deslocamento e a taxa de entregas não
+atendidas, obtidos a partir da saída de cada execução, e o tempo de execução e o
+desvio das janelas de tempo, associados ao esforço de processamento necessário para
+produzir a solução.
+
+Cada uma dessas métricas é detalhada a seguir, contemplando sua definição, o critério
+de comparação entre os algoritmos e o procedimento utilizado para sua obtenção.
+
+\begin{alineas}
+	\item \textbf{Custo total de deslocamento da frotal}: O custo total de deslocamento
+	corresponde à distância acumulada percorrida pela frota na execução das rotas
+	geradas, traduzindo diretamente o objetivo de minimização do custo operacional do
+	problema de roteamento. O desempenho será comparado considerando que menores
+	valores de deslocamento indicam soluções mais eficientes. Para sua obtenção,
+	somam-se as distâncias entre os nós visitados em sequência por cada veículo, com
+	base nas coordenadas geográficas da rota, até o retorno ao depósito, apurando-se o
+	valor total ao final de cada execução.
+
+	\item \textbf{Taxa de entregas não atendidas}: A taxa de entregas não atendidas mede
+	a proporção de clientes que não puderam ser incluídos em nenhuma rota válida,
+	expondo a capacidade do algoritmo de produzir soluções viáveis sob restrições
+	rígidas de capacidade e de janela de tempo. O desempenho será considerado superior
+	quando o algoritmo apresentar menores taxas de entregas não atendidas. Sua obtenção
+	consiste em contar, ao final de cada execução, os clientes não alocados a nenhuma
+	rota viável e dividir esse número pelo total de clientes da instância.
+
+	\item \textbf{Tempo de execução computacional}: O tempo de execução corresponde ao
+	intervalo necessário para que o algoritmo produza uma solução completa para uma
+	instância, atestando a viabilidade computacional da abordagem para aplicações reais
+	de planejamento de rotas urbanas. A avaliação considera múltiplas execuções
+	independentes, das quais se extraem o tempo médio, a variabilidade e o pior caso
+	observado, sendo o algoritmo viável quando o tempo obtido for inferior ao limite de
+	1500 ms por instância. Sua medição é feita cronometrando o intervalo entre o
+	recebimento da instância e a produção da solução final, registrado em
+	milissegundos a cada execução. Os três valores obtidos são comparados entre a
+	heurística do Vizinho Mais Próximo e o Algoritmo Genético Híbrido (GA+LS),
+	compondo a base da avaliação experimental apresentada nos capítulos seguintes.
+
+	\item \textbf{Desvio das janelas de tempo}: O desvio das janelas de tempo representa
+	o tempo de atraso acumulado nos atendimentos realizados fora do horário limite
+	estabelecido, aplicável nos casos em que o modelo permite tolerância de atendimento
+	com penalização, em vez de descartar o cliente como não atendido. O desempenho será
+	considerado superior quando o algoritmo apresentar menores valores de desvio
+	acumulado, indicando maior aderência aos horários programados. Para sua obtenção,
+	calcula-se a diferença entre o horário de atendimento efetivamente realizado e o
+	horário limite da janela de cada cliente, somando-se os desvios de todos os
+	atendimentos com atraso ao final de cada execução.
+\end{alineas}
+
+% -----------------------------------------------------------------------------
+\section{Etapa 3 - Fatores e níveis}
+\label{sec:etapa3}
+
+De acordo com \citeonline{jain1991}, esta etapa consiste em identificar os fatores que
+influenciam o desempenho do sistema avaliado e classificá-los em dois grupos: os
+parâmetros, fatores cujos níveis são deliberadamente variados ao longo do experimento
+com o propósito de observar seu efeito sobre as métricas definidas na Etapa 2, e os
+fatores fixos, mantidos constantes em todas as execuções, de modo a evitar que sua
+variação introduza ruído estatístico e comprometa a validade interna do experimento.
+
+\begin{alineas}
+	\item \textbf{Fator primário: tipo de algoritmo de roteamento}
+
+	O fator central deste experimento é o algoritmo empregado na geração das rotas,
+	apresentando dois níveis: a heurística do Vizinho Mais Próximo, adotada como
+	baseline, e o Algoritmo Genético Híbrido (GA+LS), proposta principal deste
+	trabalho. Este fator sustenta diretamente o objetivo de eficiência definido na
+	Etapa 1 (item~\ref{sec:etapa1}), sendo sua variação a que fundamenta a avaliação da
+	hipótese central da pesquisa.
+
+	\item \textbf{Configuração do Algoritmo Genético Híbrido}
+
+	Os seguintes parâmetros de configuração do Algoritmo Genético Híbrido são fixados
+	em um valor único para todas as execuções deste trabalho, reservando a investigação
+	sistemática de seus efeitos sobre o desempenho para trabalhos futuros (item 8):
+
+	\begin{itemize}
+		\item Tamanho da população: 100 indivíduos;
+		\item Número de gerações: 150;
+		\item Taxa de crossover: 0,8;
+		\item Taxa de mutação: 0,1;
+		\item Peso da penalidade de desvio de janela de tempo na função objetivo: 50;
+		\item Uso da busca local (2-opt): ativa.
+	\end{itemize}
+
+	Para o fator ``uso da busca local'', contudo, adota-se um nível adicional de
+	controle: a desativação completa do componente de busca local, reduzindo o
+	algoritmo híbrido a um Algoritmo Genético puro. A comparação entre os dois níveis
+	--- busca local ativa (GA+LS) e desativada (GA) --- permite isolar estatisticamente
+	a contribuição da hibridização sobre o desempenho, fortalecendo a validade da
+	conclusão obtida quanto à eficácia da abordagem híbrida proposta.
+
+	\item \textbf{Fatores relativos à instância do problema}
+
+	Constitui fator adicional a instância do benchmark de Solomon (1987) sobre a qual os
+	algoritmos são executados, pertencente ao grupo C1, caracterizado por clientes com
+	distribuição espacial agrupada e janelas de tempo amplas. A capacidade do veículo e
+	o número de clientes atendidos são determinados pela especificação oficial da
+	instância selecionada, não configurando fatores manipulados de forma independente.
+
+	\item \textbf{Fatores fixos}
+
+	Os seguintes fatores são mantidos constantes em todas as execuções do experimento:
+
+	\begin{itemize}
+		\item Linguagem de implementação (Python) e biblioteca de otimização evolutiva
+		utilizada (DEAP);
+		\item Ambiente de hardware sobre o qual as execuções são realizadas;
+		\item Número de execuções independentes por configuração testada, fixado em 30,
+		conforme necessário à obtenção de média, desvio padrão e aplicação dos testes de
+		hipótese não-paramétricos previstos no item~\ref{sec:natureza};
+		\item Critério de parada do Algoritmo Genético, definido como número fixo de
+		gerações, exceto nas execuções em que este parâmetro constitui o próprio fator
+		sob análise.
+	\end{itemize}
+
+	A semente de geração de números aleatórios (\textit{seed}) constitui exceção
+	deliberada entre os fatores fixos: em vez de mantida constante, é sistematicamente
+	variada entre as execuções independentes de uma mesma configuração. Essa variação
+	garante que cada repetição represente uma amostra estatisticamente independente do
+	comportamento estocástico do algoritmo, condição necessária à validade dos cálculos
+	de variabilidade e dos testes de hipótese não-paramétricos previstos na
+	classificação da pesquisa.
+\end{alineas}
+
+% -----------------------------------------------------------------------------
+\section{Etapa 4 - Técnicas de avaliação}
+\label{sec:etapa4}
+
+\citeonline{jain1991} descreve três técnicas possíveis para a avaliação de desempenho
+de sistemas computacionais: modelagem analítica, simulação e medição direta. Este
+trabalho descarta a modelagem analítica como técnica principal, uma vez que o Problema
+de Roteamento de Veículos Capacitados com Janelas de Tempo pertence à classe dos
+problemas NP-difíceis, para os quais não existe expressão fechada capaz de prever, em
+tempo computacionalmente viável, a qualidade das soluções produzidas pelas heurísticas
+e meta-heurísticas avaliadas. Ainda assim, a modelagem analítica fundamenta as
+equações de custo, as restrições de capacidade e janela de tempo, e a função objetivo
+do Algoritmo Genético Híbrido, já apresentadas nas seções anteriores deste capítulo.
+
+Adota-se, portanto, a combinação de simulação e medição direta. A simulação consiste na
+execução dos algoritmos sobre instâncias sintéticas e padronizadas do benchmark de
+Solomon (1987), que reproduzem de forma controlada padrões realistas de distribuição
+espacial de clientes, demandas e janelas de tempo observados em operações de logística
+urbana, sem depender da coleta de dados operacionais de uma empresa específica. A
+medição direta consiste na obtenção das quatro métricas definidas na Etapa 2 --- custo
+total de deslocamento, taxa de entregas não atendidas, tempo de execução computacional
+e desvio das janelas de tempo --- diretamente da execução do software implementado, em
+vez de estimadas teoricamente.
+
+Complementarmente, os resultados obtidos são confrontados com as melhores soluções
+conhecidas publicadas na literatura para a instância C101 do mesmo benchmark,
+amplamente adotado em estudos de VRPTW. Essa comparação externa situa o desempenho da
+proposta não apenas relativamente ao baseline adotado, mas também frente ao estado da
+arte da área de roteamento de veículos.
+
+% -----------------------------------------------------------------------------
+\section{Etapa 5 - Instâncias dos testes}
+\label{sec:etapa5}
+
+A condução dos experimentos deste trabalho utiliza a instância C101 do benchmark de
+Solomon (1987), pertencente ao grupo C1 definido como fator na Etapa 3
+(item~\ref{sec:etapa3}), caracterizado por clientes com distribuição espacial agrupada
+e janelas de tempo amplas. A \autoref{tab:instancias} resume as características da
+instância utilizada.
+
+\begin{table}[htb]
+	\centering
+	\caption{Instância do benchmark de Solomon (1987) utilizada nos testes}
+	\label{tab:instancias}
+	\begin{tabular}{ccccl}
+		\toprule
+		Instância & Clientes & Veículos & Capacidade & Padrão de distribuição \\
+		\midrule
+		C101      & 100      & 25       & 200        & Agrupado, janelas amplas \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+A instância C101 assume, adicionalmente, o papel de referência para a comparação
+externa com a literatura descrita na Etapa 4 (item~\ref{sec:etapa4}), por possuir
+solução ótima amplamente documentada e citada em estudos de VRPTW.
+
+% -----------------------------------------------------------------------------
+\section{Etapa 6 - Desenho do experimento}
+\label{sec:etapa6}
+
+% TODO: escrever
+
+% -----------------------------------------------------------------------------
+\section{Etapa 7 - Análise dos dados}
+\label{sec:etapa7}
+
+% TODO: escrever
+
+% -----------------------------------------------------------------------------
+\section{Critérios e Avaliação da Hipótese}
+\label{sec:criterios}
+
+% TODO: escrever
+
+% -----------------------------------------------------------------------------
+\section{Tecnologias utilizadas}
+\label{sec:tecnologias}
+
+% TODO: escrever

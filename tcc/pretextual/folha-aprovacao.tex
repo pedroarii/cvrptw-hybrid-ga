@@ -1,0 +1,43 @@
+% -----------------------------------------------------------------------------
+% Folha de rosto / aprovação (modelo UNIP)
+% -----------------------------------------------------------------------------
+\begin{folhadeaprovacao}
+	\begin{center}
+		{\setlength{\baselineskip}{18pt}\imprimirautor\par}
+
+		\vspace*{1cm}
+
+		{\large\bfseries \imprimirtitulo \par}
+	\end{center}
+
+	\vspace*{0.1cm}
+
+	% Preâmbulo alinhado à direita, como no modelo da UNIP
+	\noindent\hspace*{.466\textwidth}%
+	\makebox[0pt][l]{%
+		\begin{minipage}[t]{.58\textwidth}
+			\small \SingleSpacing
+			\imprimirpreambulo
+
+			\vspace{0.4cm}
+			Orientador: \imprimirorientador
+		\end{minipage}%
+	}
+
+	\vspace*{0.55cm}
+
+	\begin{center}
+		\small
+		Aprovado em: \rule{0.6cm}{0.4pt} de \rule{3.5cm}{0.4pt} de \rule{1.2cm}{0.4pt}
+
+		\vspace*{1.5cm}
+
+		\textbf{BANCA EXAMINADORA}
+	\end{center}
+
+	\small
+	\vspace*{-1.2cm}
+	\assinatura{\imprimirorientador{} --- Orientador \\ Universidade Paulista --- UNIP}
+	\assinatura{Prof. Me. \rule{6cm}{0.4pt} \\ Universidade Paulista --- UNIP}
+	\assinatura{Prof. Esp. \rule{6cm}{0.4pt} \\ Universidade Paulista --- UNIP}
+\end{folhadeaprovacao}
