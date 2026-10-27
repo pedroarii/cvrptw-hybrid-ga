@@ -33,7 +33,7 @@
 % Versão do texto (MAIOR.MENOR.CORREÇÃO). Ao mudar, registre no CHANGELOG.md.
 % \rascunhotrue imprime a versão no rodapé; use \rascunhofalse na entrega.
 % -----------------------------------------------------------------------------
-\newcommand{\versaotcc}{0.4.0}
+\newcommand{\versaotcc}{0.5.0}
 \newif\ifrascunho
 \rascunhotrue
 
@@ -86,6 +86,11 @@ Ciência da Computação da Universidade Paulista --- UNIP, Campus Brasília.}
 	\put(\dimexpr0.5\paperwidth\relax,\dimexpr-\paperheight+1cm\relax){%
 		\makebox[0pt]{\scriptsize\textcolor[gray]{0.5}{Versão \versaotcc{} --- rascunho}}}}
 \fi
+
+% Ambiente quadro (ABNT), numerado por capítulo como as tabelas
+\newcommand{\quadroname}{Quadro}
+\newfloat[chapter]{quadro}{loq}{\quadroname}
+\providecommand*{\quadroautorefname}{Quadro}
 
 \makeindex
 

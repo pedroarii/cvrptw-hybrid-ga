@@ -45,10 +45,11 @@ O repositório tem duas partes:
 
 O texto foi convertido de um PDF para LaTeX, de forma fiel ao original:
 
-- **Escrito:** só o Cap. 3 (Metodologia), seções 3.1 a 3.11. No 3.11, o hardware do experimento está como `[a definir]` (`% TODO`), até o grupo escolher a máquina.
-- **Placeholders:** Introdução, Fundamentação, Cap. 4 a 7, Resumo e Abstract.
+- **Escrito:** o Cap. 3 (Metodologia), seções 3.1 a 3.11. No 3.11, o hardware do experimento está como `[a definir]` (`% TODO`), até o grupo escolher a máquina.
+- **Rascunho aprovado pelo grupo:** o Cap. 4 (Modelagem), seções 4.1 a 4.7: giant tour + Split, aptidão `distância + 50 × atraso`, torneio k=3, OX, inversão, elitismo, 2-opt em todo indivíduo novo e viabilização do modelo C. Antecipado da issue #5 para o orientador validar antes do código; aguarda a opinião dele. Há um `% TODO(M1)` no 4.1 (janela do depósito).
+- **Placeholders:** Introdução, Fundamentação, Cap. 5 a 7, Resumo e Abstract.
 
-**Próxima tarefa combinada:** decidir as instâncias (ADR 002, issue #7) e começar o M1.
+**Próxima tarefa combinada:** depois da reunião com o orientador, registrar as decisões, ajustar o Cap. 4 e o 3.5 (falta listar torneio e elitismo), decidir as instâncias (ADR 002, issue #7) e começar o M1.
 
 **Tecnologias (3.11):** Python 3.14 com `uv` (lockfile), DEAP, NumPy, SciPy, pandas, Matplotlib e pytest; tempo medido com `time.perf_counter`.
 
@@ -127,7 +128,7 @@ decisão, preencha o ADR correspondente.
 cd tcc && latexmk main.tex    # gera build/main.pdf
 ```
 
-O PDF deve ter 24 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
+O PDF deve ter 29 páginas no estado atual. Depois de editar, compile e verifique se não há erros nem referências indefinidas.
 
 **Versão do texto:** `\versaotcc` em `tcc/main.tex` (`MAIOR.MENOR.CORREÇÃO`), com o histórico e as
 regras em `CHANGELOG.md`. Sem tags no Git. A versão só sobe quando o grupo pedir.
@@ -136,7 +137,7 @@ regras em `CHANGELOG.md`. Sem tags no Git. A versão só sobe quando o grupo ped
 
 - Títulos de capítulo em MAIÚSCULAS no fonte, por exemplo `\chapter{METODOLOGIA}`. Seções seguem o padrão "Etapa N - Título".
 - Citações: `\citeonline{jain1991}` produz "Jain (1991)"; `\cite{gil2022}` produz "(GIL, 2022)". Novas referências vão em `referencias.bib`.
-- Referências cruzadas sempre com `\label`/`\ref`/`\autoref`, nunca com o número escrito à mão. Os labels existentes são `sec:delineamento`, `sec:natureza` e `sec:etapa1` a `sec:etapa7`, `sec:criterios`, `sec:tecnologias`, `cap:*`.
+- Referências cruzadas sempre com `\label`/`\ref`/`\autoref`, nunca com o número escrito à mão. Os labels existentes são `sec:delineamento`, `sec:natureza` e `sec:etapa1` a `sec:etapa7`, `sec:criterios`, `sec:tecnologias`, `cap:*`; no Cap. 4, `sec:formulacao`, `sec:representacao`, `sec:aptidao`, `sec:operadores`, `sec:buscalocal`, `sec:viabilizacao`, `sec:fluxo`, `eq:*` e `quadro:gals`. Quadros usam o ambiente `quadro`, definido em `main.tex`.
 - Listas a), b), c) usam o ambiente `alineas`; tabelas usam `booktabs`; termos em inglês vão em `\textit{}`.
 - **Não reescreva** trechos que não foram pedidos. O texto é dos autores. Aponte problemas, mas só corrija quando for solicitado.
 

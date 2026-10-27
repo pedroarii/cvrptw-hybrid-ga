@@ -4,4 +4,301 @@
 \chapter{MODELAGEM DO ALGORITMO GENÉTICO HÍBRIDO}
 \label{cap:modelagem}
 
-Este capítulo formaliza o algoritmo proposto neste trabalho.
+Este capítulo formaliza o algoritmo proposto neste trabalho. Inicialmente, apresenta-se
+a formulação matemática do Problema de Roteamento de Veículos Capacitados com Janelas de
+Tempo, com a função de custo e as restrições de capacidade e de janela de tempo. Em
+seguida, descrevem-se os componentes do Algoritmo Genético Híbrido: a representação dos
+indivíduos e sua decodificação em rotas, a função de aptidão empregada durante a busca,
+os operadores genéticos, a busca local 2-opt e o procedimento de viabilização que produz
+a solução final reportada. Por fim, apresenta-se o fluxo completo do algoritmo e a
+diferença entre as configurações GA e GA+LS definidas na Etapa 3
+(item~\ref{sec:etapa3}).
+
+% -----------------------------------------------------------------------------
+\section{Formulação do problema}
+\label{sec:formulacao}
+
+O problema é definido sobre um grafo completo $G = (V, A)$, em que $V = \{0, 1, \dots,
+n\}$ é o conjunto de vértices e $A = \{(i, j) : i, j \in V, i \neq j\}$ é o conjunto de
+arcos. O vértice $0$ representa o depósito, e o conjunto $C = V \setminus \{0\}$
+representa os $n$ clientes. A cada arco $(i, j)$ associam-se a distância $d_{ij}$,
+calculada pela distância euclidiana entre as coordenadas dos vértices, e o tempo de
+viagem $t_{ij}$, que, conforme a convenção do benchmark de \citeonline{solomon1987}, é
+numericamente igual à distância. A cada cliente $i \in C$ associam-se a demanda $q_i$, o
+tempo de serviço $s_i$ e a janela de tempo $[e_i, l_i]$, em que $e_i$ é o instante mais
+cedo e $l_i$ o instante mais tarde para o início do atendimento. A janela do depósito,
+$[e_0, l_0]$, corresponde ao horizonte de planejamento. A frota é composta por um
+conjunto $K$ de $m$ veículos idênticos, cada um com capacidade $Q$.
+
+Adota-se a formulação clássica de três índices descrita por \citeonline{cordeau2002}. A
+variável binária $x_{ijk}$ assume valor 1 quando o veículo $k$ percorre o arco $(i, j)$
+e 0 caso contrário, e a variável contínua $w_{ik}$ indica o instante de início do
+atendimento do vértice $i$ pelo veículo $k$. O problema consiste em:
+
+\begin{align}
+	\min \quad & \sum_{k \in K} \sum_{(i,j) \in A} d_{ij} \, x_{ijk}
+	\label{eq:objetivo} \\
+	\text{sujeito a} \quad
+	& \sum_{k \in K} \sum_{j \in V} x_{ijk} = 1,
+	&& \forall i \in C \label{eq:visita} \\
+	& \sum_{j \in C} x_{0jk} \leq 1,
+	&& \forall k \in K \label{eq:saida} \\
+	& \sum_{i \in V} x_{ihk} - \sum_{j \in V} x_{hjk} = 0,
+	&& \forall h \in V, \forall k \in K \label{eq:fluxo} \\
+	& \sum_{i \in C} q_i \sum_{j \in V} x_{ijk} \leq Q,
+	&& \forall k \in K \label{eq:capacidade} \\
+	& w_{ik} + s_i + t_{ij} - w_{jk} \leq M (1 - x_{ijk}),
+	&& \forall (i, j) \in A, j \neq 0, \forall k \in K \label{eq:tempo} \\
+	& e_i \leq w_{ik} \leq l_i,
+	&& \forall i \in V, \forall k \in K \label{eq:janela} \\
+	& x_{ijk} \in \{0, 1\},
+	&& \forall (i, j) \in A, \forall k \in K \label{eq:binaria}
+\end{align}
+
+A função objetivo \eqref{eq:objetivo} minimiza a distância total percorrida pela frota,
+correspondente à métrica de custo total de deslocamento definida na Etapa 2
+(item~\ref{sec:etapa2}). A restrição \eqref{eq:visita} garante que cada cliente seja
+visitado exatamente uma vez; a \eqref{eq:saida} limita a uma única rota por veículo,
+partindo do depósito; e a \eqref{eq:fluxo} assegura a conservação de fluxo, de modo que
+todo veículo que chega a um vértice também o deixa. A restrição \eqref{eq:capacidade}
+impõe que a demanda total atendida por um veículo não exceda sua capacidade. A
+\eqref{eq:tempo} encadeia os instantes de atendimento ao longo da rota, sendo $M$ uma
+constante suficientemente grande que desativa a restrição quando o arco não é
+percorrido, e a \eqref{eq:janela} exige que todo atendimento se inicie dentro da janela
+do vértice. Por fim, a \eqref{eq:binaria} define o domínio das variáveis de decisão.
+
+Dada uma rota $r = (0, v_1, v_2, \dots, v_p, 0)$, os instantes de atendimento são
+obtidos por simulação ao longo da sequência. O instante de chegada ao cliente $v_j$ é
+dado por
+\begin{equation}
+	a_{v_j} = b_{v_{j-1}} + s_{v_{j-1}} + t_{v_{j-1} v_j},
+	\label{eq:chegada}
+\end{equation}
+com $b_{v_0} = e_0$ e $s_{v_0} = 0$ para o depósito, e o início do atendimento é
+\begin{equation}
+	b_{v_j} = \max\left(a_{v_j}, e_{v_j}\right),
+	\label{eq:inicio}
+\end{equation}
+isto é, um veículo que chega antes da abertura da janela aguarda até o instante
+$e_{v_j}$. Quando $b_{v_j} > l_{v_j}$, o atendimento ocorre com atraso, o que viola a
+restrição \eqref{eq:janela}. O atraso do cliente e o atraso acumulado da rota são
+definidos, respectivamente, por
+\begin{equation}
+	\lambda_{v_j} = \max\left(0, \, b_{v_j} - l_{v_j}\right)
+	\qquad \text{e} \qquad
+	\Lambda(r) = \sum_{j=1}^{p} \lambda_{v_j},
+	\label{eq:atraso}
+\end{equation}
+e a distância da rota, por
+\begin{equation}
+	D(r) = d_{0 v_1} + \sum_{j=1}^{p-1} d_{v_j v_{j+1}} + d_{v_p 0}.
+	\label{eq:distancia}
+\end{equation}
+
+Nas instâncias de \citeonline{solomon1987}, as janelas dos clientes são definidas de modo
+que um veículo que inicia o atendimento até $l_i$ ainda consegue retornar ao depósito
+dentro do horizonte $l_0$. Assim, o respeito às janelas dos clientes garante também o
+respeito à janela do depósito, e o atraso $\Lambda(r)$ considera apenas os clientes.
+% TODO(M1): conferir no parser que l_i + s_i + t_{i0} <= l_0 vale para todo cliente da C101.
+
+% -----------------------------------------------------------------------------
+\section{Representação e decodificação}
+\label{sec:representacao}
+
+Cada indivíduo do Algoritmo Genético é representado por um cromossomo de permutação
+$\pi = (\pi_1, \pi_2, \dots, \pi_n)$, que contém cada cliente de $C$ exatamente uma vez
+e não inclui o depósito nem delimitadores de rota. Essa representação, denominada
+\textit{giant tour}, foi proposta por \citeonline{prins2004} para o problema de
+roteamento de veículos e corresponde a uma única sequência de visitas, como se um só
+veículo de capacidade ilimitada atendesse todos os clientes. Sua principal vantagem é
+permitir o uso direto de operadores genéticos de permutação, que sempre produzem
+cromossomos válidos, sem necessidade de reparo.
+
+A conversão do cromossomo em um conjunto de rotas é feita pelo procedimento
+\textit{Split} \cite{prins2004}, que particiona a sequência $\pi$ em subsequências
+consecutivas, cada uma atendida por um veículo, preservando a ordem do cromossomo. O
+procedimento constrói um grafo auxiliar acíclico $H$ com os vértices $0, 1, \dots, n$,
+no qual cada arco $(i, j)$, com $i < j$, representa a rota $r_{ij} = (0, \pi_{i+1},
+\dots, \pi_j, 0)$. O arco existe somente se a demanda dessa rota respeita a capacidade
+do veículo, isto é, se
+\begin{equation}
+	\sum_{h = i+1}^{j} q_{\pi_h} \leq Q,
+	\label{eq:split-capacidade}
+\end{equation}
+e seu peso é a contribuição da rota para a função de aptidão, definida na
+\autoref{sec:aptidao}. O caminho mínimo do vértice $0$ ao vértice $n$ em $H$,
+calculado por programação dinâmica em ordem topológica, corresponde à melhor partição
+possível da sequência $\pi$ em rotas, e cada arco desse caminho define uma rota da
+solução decodificada.
+
+Como os arcos que excedem a capacidade não existem em $H$, nenhuma solução decodificada
+contém rota com demanda superior a $Q$. A restrição de capacidade \eqref{eq:capacidade}
+é, portanto, satisfeita por construção, conforme estabelecido na Etapa 2
+(item~\ref{sec:etapa2}), e não precisa ser penalizada na função de aptidão. Caso o
+caminho mínimo resulte em mais de $m$ rotas, emprega-se a variante do procedimento com
+frota limitada, também descrita por \citeonline{prins2004}, que restringe o número de
+arcos do caminho a $m$.
+
+% -----------------------------------------------------------------------------
+\section{Função de aptidão}
+\label{sec:aptidao}
+
+Conforme o tratamento das janelas de tempo definido na Etapa 2 (item~\ref{sec:etapa2}),
+o Algoritmo Genético admite, durante a busca, soluções com atendimentos após o limite da
+janela, penalizando o atraso na função de aptidão. Para um indivíduo $\pi$ decodificado
+no conjunto de rotas $R(\pi)$, a aptidão é dada por
+\begin{equation}
+	f(\pi) = \sum_{r \in R(\pi)} \left[ D(r) + \beta \, \Lambda(r) \right],
+	\label{eq:aptidao}
+\end{equation}
+em que $D(r)$ é a distância da rota \eqref{eq:distancia}, $\Lambda(r)$ é seu atraso
+acumulado \eqref{eq:atraso} e $\beta$ é o peso da penalidade de desvio de janela de
+tempo, fixado em 50 na Etapa 3 (item~\ref{sec:etapa3}). O problema é de minimização:
+quanto menor o valor de $f$, mais apto é o indivíduo.
+
+Como a aptidão é a soma das contribuições de cada rota, o peso de cada arco $(i, j)$ do
+grafo auxiliar do \textit{Split} é $D(r_{ij}) + \beta \, \Lambda(r_{ij})$. Desse modo, a
+decodificação escolhe, para a ordem de visitas fixada pelo cromossomo, a partição em
+rotas de menor aptidão, e não apenas a de menor distância. Uma solução sem atraso tem
+aptidão igual à sua distância total, que coincide com a função objetivo
+\eqref{eq:objetivo}.
+
+% -----------------------------------------------------------------------------
+\section{Operadores genéticos}
+\label{sec:operadores}
+
+O ciclo evolutivo segue a estrutura geral dos Algoritmos Genéticos descrita por
+\citeonline{holland1975} e \citeonline{goldberg1989}: uma população de indivíduos é
+avaliada, selecionada, recombinada e mutada ao longo de um número fixo de gerações. Os
+parâmetros de população, número de gerações e taxas de cruzamento e mutação são os
+fixados na Etapa 3 (item~\ref{sec:etapa3}). Os operadores empregados são descritos a
+seguir.
+
+\begin{alineas}
+	\item \textbf{População inicial}: A população inicial é composta por 100
+	permutações aleatórias dos clientes, geradas a partir da semente da execução. Não se
+	inclui na população inicial a solução da heurística do Vizinho Mais Próximo, de modo
+	que o desempenho do Algoritmo Genético não dependa do baseline com o qual é
+	comparado.
+
+	\item \textbf{Seleção}: Os pais são escolhidos por seleção por torneio
+	\cite{goldberg1989}, na qual $k = 3$ indivíduos são sorteados da população e o de
+	menor aptidão é selecionado, repetindo-se o processo até completar o número de pais
+	necessário. A seleção por torneio depende apenas da ordem relativa das aptidões, e
+	não de sua escala, o que a torna adequada a uma função de aptidão cujos valores
+	variam fortemente com a penalidade de atraso.
+
+	\item \textbf{Cruzamento}: Os pais são recombinados, com probabilidade 0,8 por par,
+	pelo cruzamento de ordem (\textit{Order Crossover}, OX) \cite{davis1985}. O operador
+	sorteia dois pontos de corte, copia para o filho o segmento do primeiro pai entre
+	esses pontos e preenche as posições restantes com os clientes ausentes, na ordem em
+	que aparecem no segundo pai. O resultado é sempre uma permutação válida, que
+	preserva a ordem relativa das visitas de ambos os pais.
+
+	\item \textbf{Mutação}: Cada filho sofre mutação com probabilidade 0,1, por
+	inversão: sorteiam-se duas posições do cromossomo e inverte-se a ordem dos clientes
+	entre elas. A inversão altera a sequência de visitas preservando a maior parte das
+	adjacências do cromossomo, o que favorece mudanças graduais na solução.
+
+	\item \textbf{Elitismo}: O melhor indivíduo de cada geração é copiado sem alterações
+	para a geração seguinte, garantindo que a melhor solução encontrada não seja perdida
+	pela ação dos operadores.
+
+	\item \textbf{Critério de parada}: A evolução termina ao completar 150 gerações,
+	conforme o fator fixo definido na Etapa 3 (item~\ref{sec:etapa3}).
+\end{alineas}
+
+% -----------------------------------------------------------------------------
+\section{Busca local 2-opt}
+\label{sec:buscalocal}
+
+A hibridização do Algoritmo Genético consiste em aplicar uma busca local aos indivíduos
+gerados, abordagem conhecida como algoritmo memético \cite{moscato1989}. Enquanto os
+operadores genéticos exploram regiões distintas do espaço de soluções, a busca local
+refina cada solução até um ótimo local, compensando a baixa capacidade de ajuste fino
+dos operadores de recombinação.
+
+Emprega-se a vizinhança 2-opt \cite{croes1958}, aplicada separadamente a cada rota da
+solução decodificada. Um movimento 2-opt remove dois arcos não adjacentes da rota,
+$(v_i, v_{i+1})$ e $(v_j, v_{j+1})$, com $i < j$, e os substitui pelos arcos $(v_i,
+v_j)$ e $(v_{i+1}, v_{j+1})$, o que equivale a inverter a ordem de visita dos clientes
+entre as posições $i+1$ e $j$. Como a inversão altera os instantes de chegada de todos
+os clientes posteriores a $v_i$, o efeito do movimento sobre as janelas de tempo não se
+reduz à variação de distância. Por isso, cada movimento é avaliado pela contribuição da
+rota para a aptidão, $D(r) + \beta \, \Lambda(r)$, e aceito somente quando a reduz.
+
+A busca adota a estratégia de primeira melhoria: o primeiro movimento que reduz a
+contribuição da rota é aplicado, e a varredura recomeça a partir da rota modificada,
+até que nenhum movimento a melhore. Ao final, as rotas melhoradas são concatenadas, na
+ordem em que aparecem na solução, para formar o novo cromossomo do indivíduo, que é
+reavaliado pelo \textit{Split}. Como a partição obtida pela busca local é um dos
+caminhos possíveis no grafo auxiliar, e o \textit{Split} retorna o de menor peso, a
+aptidão reavaliada nunca é pior que a obtida pela busca local.
+
+A busca local é aplicada a todo indivíduo novo: a cada indivíduo da população inicial e
+a cada filho modificado por cruzamento ou mutação. Indivíduos copiados sem alteração,
+como o de elite, já são ótimos locais e não são submetidos novamente ao 2-opt.
+
+% -----------------------------------------------------------------------------
+\section{Viabilização da solução final}
+\label{sec:viabilizacao}
+
+Ao término das gerações, o melhor indivíduo encontrado ao longo de toda a execução é
+decodificado, e o atraso acumulado de suas rotas, $\sum_{r} \Lambda(r)$, é registrado
+como a métrica de desvio das janelas de tempo definida na Etapa 2
+(item~\ref{sec:etapa2}). Como, na solução final reportada, as janelas de tempo são
+tratadas como restrições rígidas, essa solução passa por um procedimento de
+viabilização antes do cálculo das demais métricas.
+
+O procedimento percorre cada rota na ordem de visita, recalculando os instantes de
+chegada pelas equações \eqref{eq:chegada} e \eqref{eq:inicio}. Sempre que o instante de
+chegada a um cliente excede o limite de sua janela, o cliente é retirado da rota e
+contabilizado como não atendido, e o percurso prossegue do último cliente atendido
+diretamente para o seguinte. Como as distâncias euclidianas satisfazem a desigualdade
+triangular, a retirada de um cliente nunca atrasa a chegada aos clientes posteriores,
+de modo que uma única passagem pela rota basta para eliminar todos os atrasos. A
+retirada também reduz a carga do veículo, preservando a restrição de capacidade. Rotas
+que ficam vazias são descartadas.
+
+A solução resultante não contém atrasos e, sobre ela, calculam-se o custo total de
+deslocamento, pela soma das distâncias \eqref{eq:distancia} das rotas restantes, e a
+taxa de entregas não atendidas, pela razão entre o número de clientes retirados e o
+total de clientes $n$. Os clientes retirados não são reinseridos em outras rotas, o que
+torna a taxa de não atendidos uma medida direta da capacidade da busca de produzir
+soluções que respeitam as janelas de tempo.
+
+% -----------------------------------------------------------------------------
+\section{Fluxo do algoritmo}
+\label{sec:fluxo}
+
+O \autoref{quadro:gals} resume o fluxo completo do Algoritmo Genético Híbrido. A
+configuração GA, adotada como controle na Etapa 3 (item~\ref{sec:etapa3}), executa o
+mesmo fluxo com os passos 3 e 9 desativados. A representação, a decodificação, a
+função de aptidão, os operadores genéticos e a viabilização são idênticos nas duas
+configurações, de modo que a diferença de desempenho entre elas pode ser atribuída
+exclusivamente à busca local.
+
+\begin{quadro}[htb]
+	\centering
+	\caption{Fluxo do Algoritmo Genético Híbrido (GA+LS)}
+	\label{quadro:gals}
+	\begin{tabular}{p{0.9\textwidth}}
+		\toprule
+		\textbf{Entrada:} instância, semente da execução \\
+		\textbf{Saída:} rotas viáveis, clientes não atendidos, desvio das janelas \\
+		\midrule
+		1. Calcular a matriz de distâncias $d_{ij}$ e de tempos $t_{ij}$. \\
+		2. Gerar 100 permutações aleatórias dos clientes. \\
+		3. Aplicar o 2-opt a cada indivíduo da população inicial. \\
+		4. Avaliar cada indivíduo pelo \textit{Split} e pela aptidão $f$. \\
+		5. \textbf{Para} cada uma das 150 gerações: \\
+		\quad 6. Copiar o melhor indivíduo para a nova população (elitismo). \\
+		\quad 7. Selecionar os pais por torneio ($k = 3$). \\
+		\quad 8. Aplicar o cruzamento OX (0,8) e a mutação por inversão (0,1). \\
+		\quad 9. Aplicar o 2-opt a cada filho modificado. \\
+		\quad 10. Avaliar os filhos e formar a nova população. \\
+		11. Decodificar o melhor indivíduo encontrado e registrar o desvio. \\
+		12. Viabilizar a solução e calcular custo e taxa de não atendidos. \\
+		\bottomrule
+	\end{tabular}
+\end{quadro}

@@ -20,9 +20,20 @@ Ao subir a versão:
 
 ---
 
-## 0.4.0 (2026-10-27)
+## 0.5.0 (2026-10-27)
 
-Estado apresentado ao orientador na reunião de 2026-10-27.
+Estado levado ao orientador na reunião. Aprovado por Rafael e Pedro; as próximas mudanças
+dependem da opinião do orientador.
+
+- Cap. 4 (Modelagem do Algoritmo Genético Híbrido) escrito em rascunho, seções 4.1 a 4.7:
+  formulação de três índices, *giant tour* + *Split*, função de aptidão penalizada, operadores
+  genéticos, busca local 2-opt, viabilização da solução final e fluxo do algoritmo (Quadro 4.1).
+- Ambiente `quadro` (ABNT) definido no preâmbulo.
+- Sete referências novas: Cordeau et al. (2002), Prins (2004), Holland (1975),
+  Goldberg (1989), Davis (1985), Moscato (1989) e Croes (1958).
+- Ata e roteiro da reunião atualizados com o Cap. 4 e a quarta pergunta ao orientador.
+
+## 0.4.0 (2026-10-27)
 
 - Seção 3.11 (Tecnologias utilizadas) escrita; o hardware do experimento segue a definir.
 - Ata e roteiro da reunião em `docs/reunioes/`.
