@@ -1,6 +1,6 @@
 # 001 — Janela de tempo rígida ou flexível
 
-- **Status:** em aberto
+- **Status:** decidido (opção C), pendente de validação do grupo
 - **Data:** 2026-10-27
 - **Decisores:** Eduardo, Esther, Rafael (com o orientador)
 
@@ -30,8 +30,22 @@ penalizado (peso 50) para explorar melhor o espaço, mas só soluções sem atra
 
 ## Decisão
 
-_A preencher._
+**Opção C**, decidida por Pedro em 2026-10-27. Falta o grupo e o orientador validarem.
+
+- Durante a busca, o atraso é permitido e penalizado na função de aptidão com peso 50.
+- Na solução final reportada, a janela é rígida. Todo cliente atendido após `l_i` conta como
+  não atendido.
+- O desvio acumulado é medido na melhor solução da busca, antes dessa viabilização. É indicador
+  da busca, não de qualidade final. No NN ele é nulo por construção.
 
 ## Consequências
 
-_A preencher: seções do Cap. 3 a ajustar, impacto no avaliador e nos testes._
+- **Texto:** o Cap. 3 foi ajustado no 3.4 (agrupamento das métricas, parágrafo novo sobre o
+  tratamento das janelas, alíneas "não atendidos" e "desvio") e no 3.5 (peso 50 descrito como
+  penalidade da função de aptidão durante a busca). O Cap. 4 precisa formalizar a função de
+  aptidão penalizada e o passo de viabilização.
+- **Avaliador (M1):** devolve custo, atraso acumulado, clientes atrasados e violação de
+  capacidade separadamente. A fitness combina esses valores com o peso; a viabilização remove os
+  clientes atrasados e os conta como não atendidos. Os testes cobrem os dois caminhos.
+- **Comparação externa:** a solução final é comparável às melhores soluções conhecidas do
+  Solomon, que usam janela rígida.

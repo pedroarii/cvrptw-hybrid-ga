@@ -18,8 +18,9 @@ por NNN`. Uma decisão tomada não se apaga; se mudar, cria-se outra que a subst
 
 | # | Decisão | Status |
 |---|---|---|
-| [001](decisoes/001-janela-rigida-ou-flexivel.md) | Janela de tempo rígida ou flexível | em aberto |
+| [001](decisoes/001-janela-rigida-ou-flexivel.md) | Janela de tempo rígida ou flexível | decidido (C), validar com o grupo |
 | [002](decisoes/002-instancias-solomon.md) | Quais instâncias de Solomon usar | em aberto |
+| [003](decisoes/003-capacidade-rigida.md) | Capacidade rígida, garantida por construção | decidido |
 
 ## Atas (`reunioes/`)
 
